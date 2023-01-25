@@ -32,6 +32,12 @@ namespace SendKeysApp
         public static extern IntPtr GetModuleHandle(string lpModuleName);
 
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
         public IntPtr SetHook(LowLevelMouseProc proc)
         {
             using (Process curProcess = Process.GetCurrentProcess())
@@ -50,7 +56,10 @@ namespace SendKeysApp
         {
             if (nCode >= 0 && wParam == (IntPtr)WM_LBUTTONDOWN)
             {
-                Console.WriteLine("Left button clicked");
+                IntPtr hWnd = GetForegroundWindow();
+                StringBuilder windowTitle = new StringBuilder(256);
+                GetWindowText(hWnd, windowTitle, windowTitle.Capacity);
+                Console.WriteLine("Left button clicked on window: " + windowTitle);
             }
             else if (nCode >= 0 && wParam == (IntPtr)WM_RBUTTONDOWN)
             {
