@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace SendKeysApp
 {
@@ -47,6 +48,8 @@ namespace SendKeysApp
         String targetWindow = "";
         String targetClass = "";
 
+        IntPtr targetHandle;
+
         public Form1()
         {
             InitializeComponent();
@@ -56,6 +59,13 @@ namespace SendKeysApp
 
             _mouseHook = new MouseHook();
             _mouseHook.SetHook(_mouseHook.HookCallback);
+
+            System.Diagnostics.ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = "D:\\Apps\\Vcc-2.1.0c\\Vcc.exe";
+            Process process = Process.Start(startInfo);
+            IntPtr handle = process.MainWindowHandle;
+            targetHandle = handle;
+
         }
 
         private void Form1_MouseClick(object sender, MouseEventArgs e)
@@ -86,7 +96,7 @@ namespace SendKeysApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            timer1.Start();
+            //timer1.Start();
         }
 
 
@@ -94,9 +104,13 @@ namespace SendKeysApp
         private void button1_Click(object sender, EventArgs e)
         {
             // Find the window by its class name and window title
-            IntPtr hWnd = FindWindow("ConsoleWindowClass", "Command Prompt");
+            //IntPtr hWnd = FindWindow("ConsoleWindowClass", "Command Prompt");
+            //IntPtr hWnd = _mouseHook.getWindowHandleClicked();
+            //IntPtr hWnd = getHwndAtCursor();
+            
+            label7.Text = "Target Window Handle= " + targetHandle.ToString();
             // Set the window as the active window
-            SetForegroundWindow(hWnd);
+            SetForegroundWindow(targetHandle);
             // Send the keystrokes
             SendKeys.Send("dir{ENTER}");
         }

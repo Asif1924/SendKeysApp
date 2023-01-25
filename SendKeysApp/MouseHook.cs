@@ -11,6 +11,8 @@ namespace SendKeysApp
 {
     class MouseHook
     {
+        IntPtr windowHandleClicked = (IntPtr)0;
+
         private const int WM_LBUTTONDOWN = 0x201;
         private const int WM_LBUTTONUP = 0x202;
         private const int WM_RBUTTONDOWN = 0x204;
@@ -52,6 +54,11 @@ namespace SendKeysApp
             UnhookWindowsHookEx(_hookID);
         }
 
+        public IntPtr getWindowHandleClicked()
+        {
+            return windowHandleClicked;
+        }
+
         public IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && wParam == (IntPtr)WM_LBUTTONDOWN)
@@ -59,7 +66,8 @@ namespace SendKeysApp
                 IntPtr hWnd = GetForegroundWindow();
                 StringBuilder windowTitle = new StringBuilder(256);
                 GetWindowText(hWnd, windowTitle, windowTitle.Capacity);
-                Console.WriteLine("Left button clicked on window: " + windowTitle);
+                windowHandleClicked = hWnd;
+                Console.WriteLine("Left button clicked on window: " + windowTitle + ", handle=" + hWnd.ToString());
             }
             else if (nCode >= 0 && wParam == (IntPtr)WM_RBUTTONDOWN)
             {
